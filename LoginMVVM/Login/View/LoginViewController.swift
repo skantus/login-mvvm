@@ -26,6 +26,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .white
         setupViews()
         bindData()
+        log.debug("LoginViewController mounted")
     }
 }
 

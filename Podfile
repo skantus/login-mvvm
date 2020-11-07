@@ -10,5 +10,6 @@ target 'LoginMVVM' do
   pod 'RxCocoa'
   pod 'SnapKit'
   pod 'Alamofire', '~> 5.2.2'
+  pod 'SwiftyBeaver'
 
 end
