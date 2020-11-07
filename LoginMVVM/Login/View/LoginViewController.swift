@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class LoginViewController: UIViewController {
     
@@ -18,6 +20,9 @@ class LoginViewController: UIViewController {
     private let loginButton: UIButton = UIButton()
     
     var loginViewModel: LoginViewModel!
+    
+    private let didTapSignIn: PublishSubject = PublishSubject<Void>()
+    private let bag = DisposeBag()
     
     //MARK: - ViewController lifecycle
     override func viewDidLoad() {
@@ -50,13 +55,19 @@ extension LoginViewController {
                 self.highlightTextField(self.passwordTextField)
             }
         }
+        
+        loginButton.rx.tap.subscribe(didTapSignIn).disposed(by: bag)
+        
+        didTapSignIn.subscribe { _ in
+            self.loginButtonPressed()
+        }.disposed(by: bag)
     }
 }
 
 //MARK: Actions
 extension LoginViewController {
     
-    @objc func loginButtonPressed(_ sender: UIButton) {
+    func loginButtonPressed() {
         loginViewModel.updateCredentials(username: usernameTextField.text!, password: passwordTextField.text!)
         
         switch loginViewModel.credentialsInput() {
@@ -68,6 +79,9 @@ extension LoginViewController {
     }
     
     func login() {
+        
+        navigationController?.pushViewController(ViewController(), animated: true)
+        
         loginViewModel.login { error in
             print("res: \(String(describing: error))")
         }
@@ -129,7 +143,7 @@ extension LoginViewController {
         loginButton.setTitle("Login In", for: .normal)
         loginButton.setTitleColor(UIColor.white, for: .normal)
         loginButton.layer.cornerRadius = 3
-        loginButton.addTarget(self, action: #selector(loginButtonPressed(_:)), for: .touchUpInside)
+        // loginButton.addTarget(self, action: #selector(loginButtonPressed(_:)), for: .touchUpInside)
     }
     
     private func addSubviews() {
